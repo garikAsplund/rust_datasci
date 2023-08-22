@@ -1,9 +1,29 @@
+use std::fs::File;
+use std::io::Write;
+
+use linfa_trees::{SplitQuality, DecisionTree };
 use ndarray::Array2;
 use ndarray::prelude::*;
 use linfa::prelude::*;
 
 fn main() {
     let original_data: Array2<f32> = array! (
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
+        [1., 1., 1000., 1., 10.],
         [1., 1., 1000., 1., 10.],
 
     );
@@ -19,5 +39,16 @@ fn main() {
             i32::MIN..=4 => "Sad",
             5..=7 => "Ok",
             8..=i32::MAX => "Happy",
-    });
+    })
+    .with_feature_names(feature_names);
+
+    let model = DecisionTree::params()
+        .split_quality(SplitQuality::Gini)
+        .fit(&linfa_dataset)
+        .unwrap();
+
+    File::create("dt.tex")
+        .unwrap()
+        .write_all(model.export_to_tikz().with_legend().to_string().as_bytes())
+        .unwrap();
 }
